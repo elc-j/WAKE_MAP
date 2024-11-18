@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">WAKE_MAP</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string-array name="transport_modes">
+        <item>Voiture</item>
+        <item>Transport en commun</item>
+        <item>Marche</item>
+        <item>Vélo</item>
+    </string-array>
+
 </resources>

@@ -1,86 +1,109 @@
 package com.example.wake_map;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.example.wake_map.databinding.ActivityMapsBinding;
 
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.util.List;
-import java.util.ArrayList;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import androidx.core.app.ActivityCompat;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-
-
-
-
-
-
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
-    private EditText searchBar;
-    private ImageButton searchButton;
-    private String apiKey = "MAPS_API_KEY"; // Replace with your Google Maps API Key
+    private EditText originInput, destinationInput;
+    private Button getDirectionsButton;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LatLng currentLocation;
+
+    private String selectedMode = "transit"; // Default mode
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        // Initialize views
+        originInput = findViewById(R.id.origin_input);
+        destinationInput = findViewById(R.id.destination_input);
+        getDirectionsButton = findViewById(R.id.get_directions_button);
+
+        // Initialize FusedLocationProviderClient
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Set up the map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // Initialize views
-        searchBar = findViewById(R.id.search_bar);
-        searchButton = findViewById(R.id.searchButton);
+        // Check and request location permission
+        checkLocationPermission();
 
-        // Add onClick listener to search button to fetch the route
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        // Initialize the Spinner
+        Spinner transportModeSpinner = findViewById(R.id.transport_mode_spinner);
+
+        // Default transport modes
+        String[] transportModes = {"driving", "transit", "walking", "bicycling"};
+        transportModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                String destination = searchBar.getText().toString();
-                if (!destination.isEmpty()) {
-                    getRouteToDestination(destination);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedMode = transportModes[position]; // Update mode based on user selection
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedMode = "transit"; // Default to transit
+            }
+        });
+
+        // Set up "Get Directions" button
+        getDirectionsButton.setOnClickListener(v -> {
+            String origin = originInput.getText().toString();
+            String destination = destinationInput.getText().toString();
+
+            if (origin.isEmpty()) {
+                if (currentLocation != null) {
+                    origin = currentLocation.latitude + "," + currentLocation.longitude; // Use current location
                 } else {
-                    Toast.makeText(MapsActivity.this, "Please enter a destination", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Localisation actuelle introuvable.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
             }
+
+            if (destination.isEmpty()) {
+                Toast.makeText(MapsActivity.this, "Veuillez remplir le champ destination.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Pass origin and destination to ResultsActivity
+            Intent intent = new Intent(MapsActivity.this, ResultsActivity.class);
+            intent.putExtra("origin", origin);
+            intent.putExtra("destination", destination);
+            intent.putExtra("mode", selectedMode); // Pass selected mode (optional for dynamic WebView loading)
+            startActivity(intent);
         });
 
         // Settings button to open SettingsActivity
@@ -114,100 +137,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Set an initial location (for example, Paris)
+        // Set initial location to Paris by default
         LatLng paris = new LatLng(48.85, 2.35);
         mMap.addMarker(new MarkerOptions().position(paris).title("Marker in Paris"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(paris, 10));
+
+        // Enable "My Location" button if permission is granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            getCurrentLocation();
+        }
     }
 
-    private void getRouteToDestination(String destination) {
-        LatLng origin = new LatLng(48.85, 2.35);
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            getCurrentLocation();
+        }
+    }
 
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin.latitude + "," + origin.longitude +
-                "&destination=" + destination +
-                "&key=" + apiKey;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray routes = response.getJSONArray("routes");
-                            if (routes.length() > 0) {
-                                JSONObject route = routes.getJSONObject(0);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation();
+            } else {
+                Toast.makeText(this, "Permission de localisation refusée.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
-                                // Launch ResultsActivity with route details
-                                Intent intent = new Intent(MapsActivity.this, ResultsActivity.class);
-                                intent.putExtra("routeData", route.toString());
-                                startActivity(intent);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(MapsActivity.this, "Failed to parse route", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MapsActivity.this, "Failed to get route: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+    private void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            checkLocationPermission();
+            return;
+        }
+
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                mMap.addMarker(new MarkerOptions().position(currentLocation).title("Votre position actuelle"));
+            } else {
+                Toast.makeText(this, "Impossible de récupérer la localisation.", Toast.LENGTH_SHORT).show();
             }
         });
-        queue.add(jsonObjectRequest);
-    }
-
-
-    // Decode polyline points into LatLng list
-    private List<LatLng> decodePolyline(String encoded) {
-        List<LatLng> poly = new ArrayList<>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            poly.add(new LatLng(lat / 1E5, lng / 1E5));
-        }
-        return poly;
-    }
-
-    // Calculate the map bounds based on the route points
-    private LatLngBounds routeBounds(List<LatLng> points) {
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        for (LatLng point : points) {
-            boundsBuilder.include(point);
-        }
-        return boundsBuilder.build();
     }
 }
-
-
-
-
-
-
-

@@ -4,40 +4,43 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
-public class RouteStepsAdapter extends RecyclerView.Adapter<RouteStepsAdapter.RouteStepViewHolder> {
-    private List<String> routeSteps;
 
-    public RouteStepsAdapter(List<String> routeSteps) {
-        this.routeSteps = routeSteps;
-    }
 
-    @NonNull
-    @Override
-    public RouteStepViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.route_step_item, parent, false);
-        return new RouteStepViewHolder(view);
+public class RouteStepsAdapter extends RecyclerView.Adapter<RouteStepsAdapter.ViewHolder> {
+    private List<String> steps;
+
+    public RouteStepsAdapter(List<String> steps) {
+        this.steps = steps;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RouteStepViewHolder holder, int position) {
-        holder.stepTextView.setText(routeSteps.get(position));
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(android.R.layout.simple_list_item_1, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.stepTextView.setText(steps.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return routeSteps.size();
+        return steps.size();
     }
 
-    static class RouteStepViewHolder extends RecyclerView.ViewHolder {
-        TextView stepTextView;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView stepTextView;
 
-        public RouteStepViewHolder(@NonNull View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            stepTextView = itemView.findViewById(R.id.stepTextView);
+            stepTextView = itemView.findViewById(android.R.id.text1);
         }
     }
 }
