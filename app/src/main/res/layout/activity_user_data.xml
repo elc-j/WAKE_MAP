@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserDataActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primaryColor"
+        app:title="Données personnelles"
+        app:titleTextColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Texte d'information -->
+    <TextView
+        android:id="@+id/txtUserDataInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Vos données personnelles, notre priorité.\n\nNous nous engageons à protéger votre vie privée. Toutes les informations que vous partagez avec nous sont strictement utilisées pour améliorer votre expérience. Aucune donnée sensible ou confidentielle n'est collectée ou partagée avec des tiers sans votre consentement explicite.\n\n- Transparence : Nous vous informons clairement sur les données que nous utilisons.\n- Sécurité : Vos données sont protégées par des technologies avancées pour garantir leur confidentialité.\n- Respect : Vous pouvez à tout moment gérer vos informations ou demander leur suppression.\n\nSi vous avez des questions ou des préoccupations concernant vos données personnelles, n'hésitez pas à nous contacter."
+        android:textColor="@color/primaryTextColor"
+        android:textSize="16sp"
+        android:lineSpacingExtra="4dp"
+        android:gravity="start"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

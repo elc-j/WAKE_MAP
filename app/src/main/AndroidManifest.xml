@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Location Permissions -->
+    <!-- Permissions nécessaires -->
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
 
     <application
         android:allowBackup="true"
@@ -19,10 +19,12 @@
         android:theme="@style/Theme.WAKE_MAP"
         tools:targetApi="31">
 
+        <!-- Clé API Google Maps -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
 
+        <!-- Activité principale -->
         <activity
             android:name=".MapsActivity"
             android:exported="true"
@@ -32,14 +34,62 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".TimerActivity"></activity>
-        <activity android:name=".SetMusicActivity"></activity>
-        <activity android:name=".RouteStepsAdapter"></activity>
-        <activity android:name=".ResultsActivity"></activity>
 
+        <!-- Activité Settings -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="Paramètres" />
 
+        <!-- Activité Timer -->
+        <activity
+            android:name=".TimerActivity"
+            android:exported="true" />
 
+        <!-- Activité Set Music -->
+        <activity
+            android:name=".SetMusicActivity"
+            android:exported="true" />
+
+        <!-- Adaptateur Route Steps -->
+        <activity
+            android:name=".RouteStepsAdapter"
+            android:exported="false" /> <!-- Si ce n'est pas une activité, supprimez cela -->
+
+        <!-- Activité Results -->
+        <activity
+            android:name=".ResultsActivity"
+            android:exported="true" />
+
+        <!-- Activité Politique de confidentialité -->
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="true"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SettingsActivity" />
+        </activity>
+
+        <!-- Activité Données personnelles -->
+        <activity
+            android:name=".UserDataActivity"
+            android:exported="true"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SettingsActivity" />
+        </activity>
+
+        <!-- Activité Donner ton avis -->
+        <activity
+            android:name=".FeedbackActivity"
+            android:exported="true"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SettingsActivity" />
+        </activity>
 
     </application>
 

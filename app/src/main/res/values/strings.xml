@@ -1,6 +1,12 @@
 <resources>
+    <!-- App Name -->
     <string name="app_name">WAKE_MAP</string>
+
+    <!-- Activity Titles -->
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="settings">Paramètres</string>
+
+    <!-- Transport Modes -->
     <string-array name="transport_modes">
         <item>Voiture</item>
         <item>Transport en commun</item>
@@ -8,4 +14,21 @@
         <item>Vélo</item>
     </string-array>
 
+    <!-- Settings Page -->
+    <string name="profile_image_description">Image du profil utilisateur</string>
+    <string name="edit_profile">Modifier le profil</string>
+    <string name="user_name">Votre Nom</string>
+    <string name="user_email">votremail@example.com</string>
+    <string name="save_changes">Enregistrer les modifications</string>
+    <string name="back_button_description">Revenir en arrière</string>
+    <string name="privacy_policy_content_description">Texte de la politique de confidentialité</string>
+    <string name="privacy_policy_content">Bienvenue dans notre Politique de confidentialité. Ici, vous pouvez afficher les règles et les directives de confidentialité de votre application.</string>
+
+
+    <!-- Settings Options -->
+    <string name="terms_and_conditions">Conditions générales</string>
+    <string name="privacy_policy">Politique de confidentialité</string>
+    <string name="give_feedback">Donner un feedback</string>
+    <string name="security_settings">Paramètres de sécurité</string>
+    <string name="modifier_la_photo">Modifier la photo</string>
 </resources>
