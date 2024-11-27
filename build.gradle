@@ -4,6 +4,17 @@ buildscript {
         classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
     }
 }
+//dépendances pour serveur
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2' // Ou ta version actuelle
+        classpath 'com.google.gms:google-services:4.3.15' // Ajoute cette ligne pour Firebase
+    }
+}
 
 plugins {
 alias(libs.plugins.android.application) apply false

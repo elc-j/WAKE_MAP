@@ -2,17 +2,135 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    tools:context=".TimerActivity">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primaryColor"
+        app:title="Minuteur"
+        app:titleTextColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Texte d'instructions -->
     <TextView
+        android:id="@+id/tvInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timer Page"
-        android:textSize="24sp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Définissez un temps et démarrez le minuteur !"
+        android:textSize="16sp"
+        android:textColor="@color/primaryTextColor"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Temps à définir -->
+    <LinearLayout
+        android:id="@+id/timeInputLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvInstructions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Input pour les heures -->
+        <EditText
+            android:id="@+id/inputHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="HH"
+            android:inputType="number"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:ems="2"
+            android:maxLength="2" />
+
+        <!-- Input pour les minutes -->
+        <EditText
+            android:id="@+id/inputMinutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="MM"
+            android:inputType="number"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:ems="2"
+            android:maxLength="2" />
+
+        <!-- Input pour les secondes -->
+        <EditText
+            android:id="@+id/inputSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="SS"
+            android:inputType="number"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:ems="2"
+            android:maxLength="2" />
+    </LinearLayout>
+
+    <!-- Bouton Lancer -->
+    <Button
+        android:id="@+id/btnStartTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lancer"
+        android:backgroundTint="@color/primaryColor"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/timeInputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_marginTop="24dp" />
+
+    <!-- Bouton Arrêter -->
+    <Button
+        android:id="@+id/btnStopTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arrêter"
+        android:backgroundTint="@color/secondaryColor"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/btnStartTimer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Message de retour -->
+    <TextView
+        android:id="@+id/timerStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pas de minuteur en cours"
+        android:textSize="16sp"
+        android:textColor="@color/primaryTextColor"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/btnStopTimer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

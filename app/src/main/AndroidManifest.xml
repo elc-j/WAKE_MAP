@@ -46,11 +46,6 @@
             android:name=".TimerActivity"
             android:exported="true" />
 
-        <!-- Activité Set Music -->
-        <activity
-            android:name=".SetMusicActivity"
-            android:exported="true" />
-
         <!-- Adaptateur Route Steps -->
         <activity
             android:name=".RouteStepsAdapter"

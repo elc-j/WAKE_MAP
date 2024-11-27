@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107403339355",
+    "project_id": "wake-map-4a449",
+    "storage_bucket": "wake-map-4a449.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107403339355:android:d752e263cd0f6eb109017e",
+        "android_client_info": {
+          "package_name": "com.example.wake_map"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6J9wfz_F7YpXtp7sRqYTBTTcMYqcDbIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,6 +21,8 @@
         app:titleTextColor="@android:color/white"
         tools:layout_editor_absoluteX="6dp" />
 
+    <!-- Origin Input Field -->
+
     <ImageButton
         android:id="@+id/settingsButton"
         android:layout_width="48dp"
@@ -35,7 +37,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Origin Input Field -->
     <EditText
         android:id="@+id/origin_input"
         android:layout_width="0dp"
