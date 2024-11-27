@@ -116,16 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        // SetMusicButton to open SetMusicActivity
-        Button setMusicButton = findViewById(R.id.setMusicButton);
-        setMusicButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapsActivity.this, SetMusicActivity.class);
-                startActivity(intent);
-            }
-        });
-        Button startNavigationButton = findViewById(R.id.startNavigationButton);
+
 
 
         // TimerButton to open TimerActivity

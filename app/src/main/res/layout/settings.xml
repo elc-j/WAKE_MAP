@@ -33,59 +33,61 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <!-- Image de profil actuelle -->
             <ImageView
                 android:id="@+id/imgProfile"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/ic_profile_default"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/circle_background"
                 android:contentDescription="@string/profile_image_description"
                 android:scaleType="centerCrop"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/circle_background" />
+                android:src="@drawable/ic_profile_default" />
 
             <!-- Icône pour éditer la photo -->
             <ImageView
                 android:id="@+id/iconEditProfile"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/ic_edit"
-                android:contentDescription="@string/modifier_la_photo"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
                 android:clickable="true"
-                android:focusable="true" />
+                android:contentDescription="@string/modifier_la_photo"
+                android:focusable="true"
+                android:src="@drawable/ic_edit" />
 
             <!-- Avatar Homme -->
+
+            <!-- Avatar Femme -->
+
             <ImageView
                 android:id="@+id/avatarMale"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_avatar_male"
-                android:contentDescription="Avatar Homme"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/circle_background"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:clickable="true"
-                android:focusable="true" />
+                android:contentDescription="Avatar Homme"
+                android:focusable="true"
+                android:src="@drawable/ic_avatar_male"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
-            <!-- Avatar Femme -->
             <ImageView
                 android:id="@+id/avatarFemale"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_avatar_female"
-                android:contentDescription="Avatar Femme"
                 android:background="@drawable/circle_background"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:clickable="true"
-                android:focusable="true" />
+                android:contentDescription="Avatar Femme"
+                android:focusable="true"
+                android:src="@drawable/ic_avatar_female"
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
