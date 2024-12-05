@@ -74,6 +74,7 @@
             android:ems="2"
             android:maxLength="2" />
 
+
         <!-- Input pour les secondes -->
         <EditText
             android:id="@+id/inputSeconds"
@@ -132,5 +133,8 @@
         app:layout_constraintTop_toBottomOf="@id/btnStopTimer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

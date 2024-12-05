@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -40,6 +41,9 @@ public class ResultsActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MediaPlayer mediaPlayer;
+
+    // Nouvelle variable pour stocker le temps de trajet
+    private int temps_trajet = 0; // Temps en secondes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,19 @@ public class ResultsActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Origin or destination not provided.", Toast.LENGTH_SHORT).show();
         }
+
+        mapWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                // Une fois que la page est chargée, ouvrir TimerActivity
+                if (url.contains("google.com/maps")) { // Vérifie si c'est bien la page de Google Maps
+                    navigateToTimerActivity();
+                }
+            }
+        });
+
     }
 
     private void fetchDirections(String origin, String destination) {
@@ -105,32 +122,60 @@ public class ResultsActivity extends AppCompatActivity {
                 String url = "https://maps.googleapis.com/maps/api/directions/json?" +
                         "origin=" + origin +
                         "&destination=" + destination +
-                        "&key=YOUR_API_KEY"; // Replace with your API key
+                        "&mode=transit" +
+                        "&alternatives=true" +
+                        "&key=AIzaSyDXoUy9HwwGL_T6ucGgyLNEVg_V-6v45ok"; // Replace with your API key
 
                 Request request = new Request.Builder().url(url).build();
                 Response response = client.newCall(request).execute();
+                Log.d("FetchDirections", "Temps de trajet avant requete (en secondes) : " + temps_trajet);
 
                 if (response.isSuccessful() && response.body() != null) {
                     String responseBody = response.body().string();
                     JSONObject jsonObject = new JSONObject(responseBody);
 
-                    JSONArray legs = jsonObject
-                            .getJSONArray("routes")
-                            .getJSONObject(0)
-                            .getJSONArray("legs");
+                    JSONArray routes = jsonObject.getJSONArray("routes");
+                    if (routes.length() > 0) {
+                        JSONArray legs = routes.getJSONObject(0).getJSONArray("legs");
 
-                    JSONArray steps = legs.getJSONObject(0).getJSONArray("steps");
-                    if (steps.length() > 1) {
-                        JSONObject lastStep = steps.getJSONObject(steps.length() - 2); // N-1 step
-                        double lat = lastStep.getJSONObject("end_location").getDouble("lat");
-                        double lng = lastStep.getJSONObject("end_location").getDouble("lng");
-                        String stopName = lastStep.getString("html_instructions").replaceAll("<[^>]*>", ""); // Extract step instructions
-                        oneStopAway = new LatLng(lat, lng);
+                        if (legs.length() > 0) {
+                            JSONObject firstLeg = legs.getJSONObject(0);
 
-                        runOnUiThread(() -> {
-                            checkLocationPermission();
-                            showAlertToUser(stopName);
-                        });
+                            // Récupérer le temps de trajet en secondes et le stocker dans la variable temps_trajet
+                            temps_trajet = firstLeg.getJSONObject("duration").getInt("value");
+                            String durationText = firstLeg.getJSONObject("duration").getString("text"); // Format texte
+                            Log.d("FetchDirections", "Temps de trajet (en secondes) : " + temps_trajet);
+                            Log.d("FetchDirections", "Réponse brute de l'API : " + responseBody);
+                            String responseBody12 = response.body().string();
+                            Log.d("FetchDirections", "Réponse brute de l'API : " + responseBody12);
+                            Log.d("FetchDirections", "Origin : " + origin + ", Destination : " + destination);
+
+
+
+
+                            JSONArray steps = firstLeg.getJSONArray("steps");
+                            if (steps.length() > 1) {
+                                JSONObject lastStep = steps.getJSONObject(steps.length() - 2); // N-1 step
+                                double lat = lastStep.getJSONObject("end_location").getDouble("lat");
+                                double lng = lastStep.getJSONObject("end_location").getDouble("lng");
+                                String stopName = lastStep.getString("html_instructions").replaceAll("<[^>]*>", ""); // Nettoyer les balises HTML
+                                oneStopAway = new LatLng(lat, lng);
+
+                                // Ajouter ici le code optionnel pour une Toast, une alerte et la navigation vers TimerActivity
+                                runOnUiThread(() -> {
+                                    checkLocationPermission();
+                                    showAlertToUser(stopName);
+
+                                    // Afficher une Toast pour confirmer les données
+                                    Toast.makeText(ResultsActivity.this,
+                                            "Temps de trajet : " + durationText,
+                                            Toast.LENGTH_LONG).show();
+
+                                    // Naviguer vers TimerActivity après récupération des données
+                                    navigateToTimerActivity();
+                                });
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -138,6 +183,7 @@ public class ResultsActivity extends AppCompatActivity {
             }
         }).start();
     }
+
 
     private void showAlertToUser(String stopName) {
         String message = "Vous serez réveillé à l'arrêt \"" + stopName + "\"";
@@ -203,6 +249,15 @@ public class ResultsActivity extends AppCompatActivity {
             Toast.makeText(this, "Error playing alarm sound.", Toast.LENGTH_SHORT).show();
         }
     }
+    private void navigateToTimerActivity() {
+        Log.d("FetchDirections", "Temps de trajet dans la fonction navigateToTimerActivity (en secondes) : " + temps_trajet);
+        temps_trajet -= 300; // Soustraire 5 minutes à temps_trajet
+        Log.d("FetchDirections", "Temps de trajet dans la fonction navigateToTimerActivity (en secondes) moins 5 mins: " + temps_trajet);
+        Intent intent = new Intent(ResultsActivity.this, TimerActivity.class);
+        intent.putExtra("temps_trajet", temps_trajet); // Passer la valeur de temps_trajet
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onDestroy() {

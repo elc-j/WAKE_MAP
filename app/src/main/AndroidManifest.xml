@@ -85,6 +85,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SettingsActivity" />
         </activity>
+        <service android:name=".TimerService" android:exported="false" />
 
     </application>
 
